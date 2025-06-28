@@ -1,4 +1,4 @@
-# The R codes for simulation studies in the manuscript entitled "Functional Quantile Regression with Interaction Effects".
+# The R codes for numerical studies and empirical analysis in the manuscript entitled "Functional Quantile Regression with Interaction Effects".
 ###########################################################
 
 1. FunQuRIE_est.R: the R code used to calculate the estimation for the parameters of the functional quantile regression with interation effects (FunQuRIE). The initial output is used as the starting point of the iteration algorithm for computing the estimations of the proposed method.
@@ -10,4 +10,6 @@
 4. FunQuRIE_eval.R: the R code used to evaluate the the performance of estimates in both proposed FunQuRIE model and conventional functional quantile regression.
 
 5. Sam_data.R: the R code used to generate data for the simulation studies presented in the manuscript.
+
+6. Real_data.R: the R code used to conduct real data analysis presented in the manuscript. 
 ###########################################################

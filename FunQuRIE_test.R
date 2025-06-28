@@ -5,7 +5,7 @@ library(psych)
 library(splines2)
 library(fda)
 
-# hypothesis test for interaction effects
+# Hypothesis Test for Interaction Effects
 
 compute_rho_prime <- function(tau) {
   return(function(x) { dnorm(x, mean = tau, sd = 1) })  
@@ -31,7 +31,7 @@ compute_R <- function(PZ, W) {
   return(R)
 }
 
-objective_function <- function(alpha, xi_list, gamma_list, xi_mat, X, Y, h, tau, u_grid) {
+objective_function <- function(alpha, xi_list, gamma_list, xi_mat, X, Z, Y, h, tau, u_grid) {
   N <- nrow(X)
   loss <- 0
   
@@ -49,11 +49,11 @@ objective_function <- function(alpha, xi_list, gamma_list, xi_mat, X, Y, h, tau,
 }
 
 
-gradient_descent <- function(alpha, xi_list, gamma_list, xi_mat, X, Y, Z, phi, tau, h, u_grid, lr = 0.01, max_iter = 50) {
+gradient_descent <- function(alpha, xi_list, gamma_list, xi_mat, X, Z, Y, tau, h, lr = 0.01, max_iter = 50) {
   loss_trace <- numeric(max_iter)
   
   for (iter in 1:max_iter) {
-    loss <- objective_function(alpha, xi_list, gamma_list, xi_mat, X, Y, h, tau, u_grid)
+    loss <- objective_function(alpha, xi_list, gamma_list, xi_mat, X, Z, Y, h, tau, u_grid)
     loss_trace[iter] <- loss
     cat("Iter:", iter, "Loss:", loss, "\n")
     
@@ -87,7 +87,7 @@ gradient_descent <- function(alpha, xi_list, gamma_list, xi_mat, X, Y, Z, phi, t
 }
 
 
-compute_VN <- function(R, Y, X, alpha, gamma_list, xi_list, u_grid, h, tau) {
+compute_VN <- function(R, Y, X, Z, alpha, gamma_list, xi_list, u_grid, h, tau) {
   V_N <- numeric(length(R))
   
   rho_tau_prime <- compute_rho_prime(tau)  
@@ -103,7 +103,7 @@ compute_VN <- function(R, Y, X, alpha, gamma_list, xi_list, u_grid, h, tau) {
   return(V_N)
 }
 
-compute_SigmaN <- function(R, Y, X, alpha, gamma_list, xi_list, u_grid, h, tau) {
+compute_SigmaN <- function(R, Y, X, Z, alpha, gamma_list, xi_list, u_grid, h, tau) {
   Sigma_N <- matrix(0, nrow = length(R), ncol = length(R))
   
   rho_tau_prime <- compute_rho_prime(tau)
@@ -126,7 +126,7 @@ compute_test_statistic <- function(V_N, Sigma_N, p, m) {
   return(S_N)
 }
 
-run_test <- function(X, Y, Z, phi, tau, h, u_grid, p, m, max_iter = 50) {
+run_test <- function(X, Z, Y, tau, h, u_grid, p, m, max_iter = 50) {
 
   alpha_init <- rep(0, ncol(X)) 
   xi_list_init <- list(rep(0, ncol(X)))  
@@ -144,14 +144,14 @@ run_test <- function(X, Y, Z, phi, tau, h, u_grid, p, m, max_iter = 50) {
   xi_list_hat <- fit_result$xi_list
   gamma_list_hat <- fit_result$gamma_list
   
-  V_N <- compute_VN(R, Y, X, alpha_hat, gamma_list_hat, xi_list_hat, u_grid, h, tau)
-  Sigma_N <- compute_SigmaN(R, Y, X, alpha_hat, gamma_list_hat, xi_list_hat, u_grid, h, tau)
+  V_N <- compute_VN(R, Y, X, Z, alpha_hat, gamma_list_hat, xi_list_hat, u_grid, h, tau)
+  Sigma_N <- compute_SigmaN(R, Y, X, Z, alpha_hat, gamma_list_hat, xi_list_hat, u_grid, h, tau)
 
   S_N <- compute_test_statistic(V_N, Sigma_N, p, m)
 
   return(S_N)
 }
 
-S_N_result <- run_test(X, Y, Z, phi, tau, h, u_grid, p, m)
+S_N_result <- run_test(X, Z, Y, tau, h, u_grid, p, m)
 
 

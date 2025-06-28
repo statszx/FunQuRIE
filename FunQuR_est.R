@@ -179,4 +179,3 @@ xi_mat_init <- matrix(0, N, p)
 
 result <- iterated_estimation(X, Y, u_grid, alpha_init, xi_list_init, gamma_list_init, xi_mat_init, tau = 0.5, h = 0.05)
 beta_g0 <- get_beta_g0(result$alpha, result$gamma_list)
-

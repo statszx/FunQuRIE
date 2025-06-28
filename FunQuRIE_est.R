@@ -46,7 +46,7 @@ convolution_derivative <- function(rho_tau, K_h, u_grid) {
 }
 
 
-objective_function <- function(alpha, xi_list, gamma_list, xi_mat, X, Y, h, tau) {
+objective_function <- function(alpha, xi_list, gamma_list, xi_mat, X, Z, Y, h, tau) {
   N <- nrow(X)
   loss <- 0
 
@@ -70,7 +70,7 @@ objective_function <- function(alpha, xi_list, gamma_list, xi_mat, X, Y, h, tau)
 }
 
 
-gradient_descent <- function(alpha, xi_list, gamma_list, xi_mat, X, Y, tau = 0.5, h = 0.05, lr = 0.01, max_iter = 50) {
+gradient_descent <- function(alpha, xi_list, gamma_list, xi_mat, X, Z, Y, tau = 0.5, h = 0.05, lr = 0.01, max_iter = 50) {
   loss_trace <- numeric(max_iter)
   
   for (iter in 1:max_iter) {
@@ -81,14 +81,14 @@ gradient_descent <- function(alpha, xi_list, gamma_list, xi_mat, X, Y, tau = 0.5
     for (j in 1:length(alpha)) {
       alpha_eps <- alpha
       alpha_eps[j] <- alpha_eps[j] + 1e-5
-      grad <- (objective_function(alpha_eps, xi_list, gamma_list, xi_mat, X, Y, h, tau) - loss) / 1e-5
+      grad <- (objective_function(alpha_eps, xi_list, gamma_list, xi_mat, X, Z, Y, h, tau) - loss) / 1e-5
       alpha[j] <- alpha[j] - lr * grad
     }
     
     for (j in 1:length(gamma_list)) {
       gamma_eps <- gamma_list
       gamma_eps[[j]] <- gamma_eps[[j]] + 1e-5
-      grad <- (objective_function(alpha, xi_list, gamma_eps, xi_mat, X, Y, h, tau) - loss) / 1e-5
+      grad <- (objective_function(alpha, xi_list, gamma_eps, xi_mat, X, Z, Y, h, tau) - loss) / 1e-5
       gamma_list[[j]] <- gamma_list[[j]] - lr * grad
     }
     
@@ -96,7 +96,7 @@ gradient_descent <- function(alpha, xi_list, gamma_list, xi_mat, X, Y, tau = 0.5
       for (k in 1:length(xi_list[[j]])) {
         xi_eps <- xi_list
         xi_eps[[j]][k] <- xi_eps[[j]][k] + 1e-5
-        grad <- (objective_function(alpha, xi_eps, gamma_list, xi_mat, X, Y, h, tau) - loss) / 1e-5
+        grad <- (objective_function(alpha, xi_eps, gamma_list, xi_mat, X, Z, Y, h, tau) - loss) / 1e-5
         xi_list[[j]][k] <- xi_list[[j]][k] - lr * grad
       }
     }
@@ -106,7 +106,7 @@ gradient_descent <- function(alpha, xi_list, gamma_list, xi_mat, X, Y, tau = 0.5
 }
 
 
-iterated_estimation <- function(X, Y, u_grid, alpha_init, xi_list_init, gamma_list_init, xi_mat_init, tau = 0.5, h = 0.05, max_iter = 50, lr = 0.01, convergence_threshold = 1e-5) {
+iterated_estimation <- function(X, Z, Y, u_grid, alpha_init, xi_list_init, gamma_list_init, xi_mat_init, tau = 0.5, h = 0.05, max_iter = 50, lr = 0.01, convergence_threshold = 1e-5) {
 
   alpha <- alpha_init
   xi_list <- xi_list_init
@@ -118,7 +118,7 @@ iterated_estimation <- function(X, Y, u_grid, alpha_init, xi_list_init, gamma_li
   for (iter in 1:max_iter) {
     cat("Iteration", iter, "\n")
 
-    grad_results <- compute_gradients(alpha, xi_list, gamma_list, xi_mat, X, Y, tau, h)
+    grad_results <- compute_gradients(alpha, xi_list, gamma_list, xi_mat, X, Z, Y, tau, h)
     
     grad_gamma <- grad_results$grad_alpha  
     alpha <- alpha - lr * grad_gamma 
@@ -137,7 +137,7 @@ iterated_estimation <- function(X, Y, u_grid, alpha_init, xi_list_init, gamma_li
       gamma_list[[j]] <- gamma_list[[j]] - lr * grad_gamma_list[[j]]
     }
 
-    loss <- objective_function(alpha, xi_list, gamma_list, xi_mat, X, Y, h, tau)
+    loss <- objective_function(alpha, xi_list, gamma_list, xi_mat, X, Z, Y, h, tau)
     loss_trace[iter] <- loss
     cat("Loss:", loss, "\n")
     
@@ -169,13 +169,12 @@ get_beta_g0_gj <- function(alpha, gamma_list, xi_list) {
   gj <- xi_list[[1]]
   
   return(list(beta = beta, g0 = g0, gj = gj))
-} 
+}
 
 alpha_init <- rep(0, p)  
 xi_list_init <- list(rep(0, K))  
 gamma_list_init <- list(rep(0, K))  
 xi_mat_init <- matrix(0, N, p)  
 
-result <- iterated_estimation(X, Y, u_grid, alpha_init, xi_list_init, gamma_list_init, xi_mat_init, tau = 0.5, h = 0.05)
+result <- iterated_estimation(X, Z, Y, u_grid, alpha_init, xi_list_init, gamma_list_init, xi_mat_init, tau = 0.5, h = 0.05)
 beta_g0_gj <- get_beta_g0_gj(result$alpha, result$gamma_list, result$xi_list)
-

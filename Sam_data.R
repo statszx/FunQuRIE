@@ -1,4 +1,11 @@
-# Generate the data sample
+library(Matrix)
+library(MASS)
+library(mgcv)
+library(psych)
+library(splines2)
+library(fda)
+
+# Generate the Data Sample
 
 N <- 100
 
@@ -49,7 +56,6 @@ g_1_values <- g_1_fun(integral_beta_1)
 g_2_values <- g_2_fun(integral_beta_2)
 
 respon_Y <- cov_X %*% alpha + g_0_values + cov_X[,1] * g_1_values + cov_X[,2] * g_2_values  + rnorm(N,0,1)
-data=respon_Y
 
 # Scenario II
 
@@ -86,6 +92,9 @@ integral_beta_2 <- apply(cov_Z, 1, function(Z_i) {
   return(integral_value)
 })
 
+g_0_values <- g_0_fun(integral_beta_0)
+g_1_values <- g_1_fun(integral_beta_1)
+g_2_values <- g_2_fun(integral_beta_2)
+
 respon_Y <- cov_X %*% alpha + g_0_values + cov_X[,1] * g_1_values + cov_X[,2] * g_2_values  + rnorm(N,0,1)
-data=respon_Y
 
