@@ -169,7 +169,7 @@ get_beta_g0_gj <- function(alpha, gamma_list, xi_list) {
   gj <- xi_list[[1]]
   
   return(list(beta = beta, g0 = g0, gj = gj))
-}
+} 
 
 alpha_init <- rep(0, p)  
 xi_list_init <- list(rep(0, K))  
