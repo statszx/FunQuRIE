@@ -5,7 +5,7 @@ library(psych)
 library(splines2)
 library(fda)
 
-# Hypothesis Test for Interaction Effects
+# Hypothesis Test for the Interaction Effects
 
 compute_rho_prime <- function(tau) {
   return(function(x) { dnorm(x, mean = tau, sd = 1) })  
