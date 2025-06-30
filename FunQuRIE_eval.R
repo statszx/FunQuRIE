@@ -6,7 +6,7 @@ library(fdapace)
 library(splines2)
 library(fda)
 
-# Evaluate estimations from FunQuRIE and FunQuR Model
+# Evaluate Estimations from FunQuRIE and FunQuR Models
 
 rho_tau <- function(u, tau) {
   u * (tau - as.numeric(u < 0))

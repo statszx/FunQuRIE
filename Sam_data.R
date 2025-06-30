@@ -97,4 +97,3 @@ g_1_values <- g_1_fun(integral_beta_1)
 g_2_values <- g_2_fun(integral_beta_2)
 
 respon_Y <- cov_X %*% alpha + g_0_values + cov_X[,1] * g_1_values + cov_X[,2] * g_2_values  + rnorm(N,0,1)
-
