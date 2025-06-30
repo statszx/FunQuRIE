@@ -7,7 +7,6 @@ library(fda)
 library(fds)
 library(fda.usc)
 
-
 # Biscuit Data Analysis
 
 respon_Y <- cbind(labp[2,],labc[2,])
