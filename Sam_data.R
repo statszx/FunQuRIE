@@ -5,7 +5,7 @@ library(psych)
 library(splines2)
 library(fda)
 
-# Generate the Data Sample
+# Generate the Simulation Data Sample
 
 N <- 100
 
